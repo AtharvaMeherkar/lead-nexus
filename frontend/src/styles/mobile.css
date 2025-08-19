@@ -1,0 +1,219 @@
+/* Mobile-specific optimizations */
+
+/* Touch-friendly button sizes */
+@media (max-width: 768px) {
+  .MuiButton-root {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px 16px !important;
+  }
+
+  .MuiIconButton-root {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Larger text for better readability */
+  .MuiTypography-h1 {
+    font-size: 2rem !important;
+  }
+
+  .MuiTypography-h2 {
+    font-size: 1.75rem !important;
+  }
+
+  .MuiTypography-h3 {
+    font-size: 1.5rem !important;
+  }
+
+  .MuiTypography-h4 {
+    font-size: 1.25rem !important;
+  }
+
+  .MuiTypography-h5 {
+    font-size: 1.125rem !important;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 1rem !important;
+  }
+
+  /* Better spacing for mobile */
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Card optimizations */
+  .MuiCard-root {
+    margin-bottom: 16px !important;
+  }
+
+  .MuiCardContent-root {
+    padding: 16px !important;
+  }
+
+  /* Form field optimizations */
+  .MuiTextField-root {
+    margin-bottom: 16px !important;
+  }
+
+  .MuiInputBase-root {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  /* Table optimizations */
+  .MuiTable-root {
+    font-size: 14px !important;
+  }
+
+  .MuiTableCell-root {
+    padding: 8px 4px !important;
+  }
+
+  /* Dialog optimizations */
+  .MuiDialog-paper {
+    margin: 16px !important;
+    max-width: calc(100vw - 32px) !important;
+    max-height: calc(100vh - 32px) !important;
+  }
+
+  /* Drawer optimizations */
+  .MuiDrawer-paper {
+    width: 280px !important;
+  }
+
+  /* AppBar optimizations */
+  .MuiAppBar-root {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .MuiToolbar-root {
+    min-height: 56px !important;
+  }
+
+  /* Chip optimizations */
+  .MuiChip-root {
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+
+  /* Fab optimizations */
+  .MuiFab-root {
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .MuiContainer-root {
+    max-width: 100% !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  .MuiCard-root {
+    margin-bottom: 20px !important;
+  }
+
+  .MuiCardContent-root {
+    padding: 20px !important;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .MuiAppBar-root {
+    min-height: 48px !important;
+  }
+
+  .MuiToolbar-root {
+    min-height: 48px !important;
+  }
+
+  .MuiContainer-root {
+    margin-top: 16px !important;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiFab-root {
+    border-width: 0.5px !important;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode optimizations for mobile */
+@media (prefers-color-scheme: dark) {
+  .MuiAppBar-root {
+    background-color: rgba(18, 18, 18, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+}
+
+/* Focus indicators for accessibility */
+.MuiButton-root:focus-visible,
+.MuiIconButton-root:focus-visible,
+.MuiTextField-root:focus-within {
+  outline: 2px solid #1976d2 !important;
+  outline-offset: 2px !important;
+}
+
+/* Loading state optimizations */
+.MuiCircularProgress-root {
+  stroke-width: 3px !important;
+}
+
+/* Notification optimizations */
+.MuiSnackbar-root {
+  bottom: 16px !important;
+  left: 16px !important;
+  right: 16px !important;
+  width: auto !important;
+}
+
+/* Chart optimizations for mobile */
+@media (max-width: 768px) {
+  .MuiCharts-root {
+    height: 300px !important;
+  }
+
+  .MuiCharts-axis {
+    font-size: 12px !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .MuiAppBar-root,
+  .MuiDrawer-root,
+  .MuiFab-root,
+  .MuiSnackbar-root {
+    display: none !important;
+  }
+
+  .MuiContainer-root {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .MuiCard-root {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

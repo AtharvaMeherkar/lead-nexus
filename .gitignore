@@ -1,0 +1,19 @@
+# VSCode specific
+.vscode/
+
+# Node / React specifics
+node_modules/
+build/
+.pnp
+.pnp.js
+coverage/
+
+# Python / AI specifics
+__pycache__/
+*.pyc
+.env
+venv/
+instance/
+
+# macOS specific
+.DS_Store

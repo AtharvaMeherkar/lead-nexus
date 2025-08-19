@@ -1,0 +1,16 @@
+title,industry,price,contact_email,company_name,contact_name,contact_phone,location,description
+Tech Startup Lead,technology,150.00,john@techstartup.com,TechStartup Inc,John Smith,(555) 123-4567,San Francisco CA,High-growth SaaS company seeking enterprise solutions
+Healthcare Provider,healthcare,200.00,mary@healthcorp.com,HealthCorp Medical,Mary Johnson,(555) 234-5678,New York NY,Large hospital network looking for medical software
+Financial Services Lead,finance,175.50,david@fintech.com,FinTech Solutions,David Wilson,(555) 345-6789,Chicago IL,Regional bank seeking digital transformation tools
+Education Institution,education,120.00,sarah@university.edu,State University,Sarah Brown,(555) 456-7890,Boston MA,University department needing LMS platform
+Retail Chain,retail,140.00,mike@retailcorp.com,RetailCorp Inc,Mike Davis,(555) 567-8901,Los Angeles CA,Multi-location retailer seeking POS system
+Manufacturing Company,manufacturing,180.00,lisa@manufacturing.com,Manufacturing Co,Lisa Garcia,(555) 678-9012,Detroit MI,Industrial manufacturer needing ERP solution
+Real Estate Agency,real estate,160.00,alex@realty.com,Realty Partners,Alex Martinez,(555) 789-0123,Miami FL,Real estate firm seeking CRM platform
+Legal Services,legal,190.00,emma@lawfirm.com,Law & Associates,Emma Taylor,(555) 890-1234,Washington DC,Law firm needing case management software
+Marketing Agency,marketing,130.00,chris@marketing.com,Creative Marketing,Chris Anderson,(555) 901-2345,Seattle WA,Marketing agency seeking analytics tools
+Food & Beverage,food & beverage,145.00,anna@restaurant.com,Restaurant Group,Anna Rodriguez,(555) 012-3456,Austin TX,Restaurant chain seeking ordering system
+Construction Company,construction,170.00,james@construction.com,Construction Ltd,James Thompson,(555) 123-4567,Dallas TX,Construction firm needing project management tools
+Consulting Firm,consulting,155.00,rachel@consulting.com,Strategic Consulting,Rachel Lee,(555) 234-5678,Denver CO,Consulting firm seeking collaboration tools
+Non-Profit Organization,non-profit,100.00,thomas@charity.org,Charity Foundation,Thomas White,(555) 345-6789,Portland OR,Non-profit seeking donor management system
+E-commerce Business,e-commerce,165.00,olivia@ecommerce.com,Online Store,Olivia Clark,(555) 456-7890,Atlanta GA,E-commerce site seeking inventory management
+Software Company,technology,185.00,daniel@software.com,Software Solutions,Daniel Lewis,(555) 567-8901,San Diego CA,Software company seeking development tools
