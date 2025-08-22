@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const { data } = await api.post("/api/auth/login", { email, password });
       dispatch(loginSuccess({ token: data.token, role: data.role }));
-      navigate("/");
+      navigate("/marketplace");
     } catch (err: any) {
       setError(err?.response?.data?.error || "Login failed");
     }

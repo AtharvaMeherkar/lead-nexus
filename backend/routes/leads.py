@@ -167,10 +167,23 @@ def confirm_upload():
                 
         db.commit()
 
+    # Prepare detailed response message
+    if created == 0 and len(skipped) > 0:
+        duplicate_count = len([s for s in skipped if "Duplicate" in s.get("reason", "")])
+        if duplicate_count > 0:
+            message = f"No new leads created. {duplicate_count} leads were duplicates or already uploaded. Please upload new, unique leads instead of reusing existing data."
+        else:
+            message = f"No leads created. {len(skipped)} leads had validation errors. Please review and fix the issues before uploading again."
+    elif created > 0 and len(skipped) > 0:
+        duplicate_count = len([s for s in skipped if "Duplicate" in s.get("reason", "")])
+        message = f"Successfully created {created} leads. {duplicate_count} leads were skipped as duplicates or already uploaded. Please ensure you're uploading unique data for better results."
+    else:
+        message = f"Successfully created {created} leads!"
+    
     return jsonify({
         "created": created,
         "skipped": skipped,
-        "message": f"Successfully created {created} leads"
+        "message": message
     }), 201
 
 

@@ -92,57 +92,75 @@ export default function Landing() {
                 },
               }}
             >
-              <Button
-                variant="contained"
-                color="secondary"
-                size="large"
-                component={Link}
-                to="/marketplace"
-                sx={{
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-                  },
-                  transition: "all 0.3s ease-in-out",
-                }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                Browse Marketplace
-              </Button>
-              <Button
-                variant="outlined"
-                color="inherit"
-                size="large"
-                component={Link}
-                to="/login"
-                sx={{
-                  borderWidth: "2px",
-                  "&:hover": {
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  component={Link}
+                  to="/marketplace"
+                  sx={{
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+                    },
+                    transition: "all 0.3s ease-in-out",
+                  }}
+                >
+                  Browse Marketplace
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  size="large"
+                  component={Link}
+                  to="/login"
+                  sx={{
                     borderWidth: "2px",
-                    transform: "translateY(-2px)",
-                  },
-                  transition: "all 0.3s ease-in-out",
-                }}
+                    "&:hover": {
+                      borderWidth: "2px",
+                      transform: "translateY(-2px)",
+                    },
+                    transition: "all 0.3s ease-in-out",
+                  }}
+                >
+                  Login
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                Login
-              </Button>
-              <Button
-                variant="outlined"
-                color="inherit"
-                size="large"
-                component={Link}
-                to="/register"
-                sx={{
-                  borderWidth: "2px",
-                  "&:hover": {
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  size="large"
+                  component={Link}
+                  to="/register"
+                  sx={{
                     borderWidth: "2px",
-                    transform: "translateY(-2px)",
-                  },
-                  transition: "all 0.3s ease-in-out",
-                }}
-              >
-                Create Account
-              </Button>
+                    "&:hover": {
+                      borderWidth: "2px",
+                      transform: "translateY(-2px)",
+                    },
+                    transition: "all 0.3s ease-in-out",
+                  }}
+                >
+                  Create Account
+                </Button>
+              </motion.div>
             </Stack>
           </motion.div>
         </Container>
@@ -257,26 +275,34 @@ export default function Landing() {
               },
             ].map((m, i) => (
               <Grid key={i} item xs={12} md={4}>
-                <AnimatedCard
-                  delay={i * 0.2}
-                  sx={{
-                    p: { xs: 2, md: 3 },
-                    textAlign: "center",
-                    height: "100%",
-                  }}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: i * 0.2 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5 }}
                 >
-                  <Box sx={{ mb: 2 }}>{m.icon}</Box>
-                  <Typography
-                    variant={isMobile ? "h6" : "h5"}
-                    fontWeight={700}
-                    gutterBottom
+                  <AnimatedCard
+                    delay={i * 0.2}
+                    sx={{
+                      p: { xs: 2, md: 3 },
+                      textAlign: "center",
+                      height: "100%",
+                    }}
                   >
-                    {m.label}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {m.sub}
-                  </Typography>
-                </AnimatedCard>
+                    <Box sx={{ mb: 2 }}>{m.icon}</Box>
+                    <Typography
+                      variant={isMobile ? "h6" : "h5"}
+                      fontWeight={700}
+                      gutterBottom
+                    >
+                      {m.label}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {m.sub}
+                    </Typography>
+                  </AnimatedCard>
+                </motion.div>
               </Grid>
             ))}
           </Grid>
@@ -323,38 +349,50 @@ export default function Landing() {
               },
             }}
           >
-            <Button
-              variant="contained"
-              size="large"
-              component={Link}
-              to="/marketplace"
-              sx={{
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-                },
-                transition: "all 0.3s ease-in-out",
-              }}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              Start Browsing
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              component={Link}
-              to="/register"
-              sx={{
-                borderWidth: "2px",
-                "&:hover": {
+              <Button
+                variant="contained"
+                size="large"
+                component={Link}
+                to="/marketplace"
+                sx={{
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+                  },
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >
+                Start Browsing
+              </Button>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button
+                variant="outlined"
+                size="large"
+                component={Link}
+                to="/register"
+                sx={{
                   borderWidth: "2px",
-                  transform: "translateY(-2px)",
-                },
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              Create Free Account
-            </Button>
+                  "&:hover": {
+                    borderWidth: "2px",
+                    transform: "translateY(-2px)",
+                  },
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >
+                Create Free Account
+              </Button>
+            </motion.div>
           </Stack>
         </motion.div>
       </Container>

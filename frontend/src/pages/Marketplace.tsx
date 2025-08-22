@@ -127,7 +127,7 @@ export default function Marketplace() {
   const [error, setError] = useState<string | null>(null);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const dispatch = useDispatch();
-  const { token } = useSelector((state: RootState) => state.auth);
+  const { token, role } = useSelector((state: RootState) => state.auth);
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -620,7 +620,13 @@ export default function Marketplace() {
                         <Visibility />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Add to Cart">
+                    <Tooltip
+                      title={
+                        role === "vendor"
+                          ? "Vendors cannot purchase leads"
+                          : "Add to Cart"
+                      }
+                    >
                       <IconButton
                         size="small"
                         onClick={() =>
@@ -632,23 +638,40 @@ export default function Marketplace() {
                             })
                           )
                         }
-                        disabled={!token}
+                        disabled={!token || role === "vendor"}
+                        sx={{
+                          cursor: role === "vendor" ? "not-allowed" : "pointer",
+                          opacity: role === "vendor" ? 0.5 : 1,
+                        }}
                       >
                         <ShoppingCart />
                       </IconButton>
                     </Tooltip>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => onPurchase(item.id || 0)}
-                      disabled={
-                        !token ||
-                        loading ||
-                        (item.status || "available") !== "available"
+                    <Tooltip
+                      title={
+                        role === "vendor"
+                          ? "Vendors cannot purchase leads"
+                          : "Purchase Lead"
                       }
                     >
-                      Purchase
-                    </Button>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => onPurchase(item.id || 0)}
+                        disabled={
+                          !token ||
+                          loading ||
+                          role === "vendor" ||
+                          (item.status || "available") !== "available"
+                        }
+                        sx={{
+                          cursor: role === "vendor" ? "not-allowed" : "pointer",
+                          opacity: role === "vendor" ? 0.5 : 1,
+                        }}
+                      >
+                        Purchase
+                      </Button>
+                    </Tooltip>
                   </Box>
                 </CardActions>
               </Card>

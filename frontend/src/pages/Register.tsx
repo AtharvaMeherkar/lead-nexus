@@ -30,7 +30,7 @@ export default function Register() {
         role,
       });
       dispatch(loginSuccess({ token: data.token, role: data.role }));
-      navigate("/");
+      navigate("/marketplace");
     } catch (err: any) {
       setError(err?.response?.data?.error || "Registration failed");
     }
