@@ -25,7 +25,7 @@ import VendorDashboard from "./pages/VendorDashboard";
 import Cart from "./pages/Cart";
 import TermsPage from "./pages/TermsPage";
 import LeadDetails from "./pages/LeadDetails";
-import ContactSalesPage from "./pages/ContactSalesPage";
+import ContactSales from "./pages/ContactSales";
 import Profile from "./pages/Profile";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -71,7 +71,7 @@ function App() {
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/team" element={<TeamPage />} />
-              <Route path="/contact-sales" element={<ContactSalesPage />} />
+              <Route path="/contact-sales" element={<ContactSales />} />
               <Route
                 path="/cart"
                 element={
@@ -121,7 +121,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
             </Routes>
           </AnimatedPageTransition>
         </Container>

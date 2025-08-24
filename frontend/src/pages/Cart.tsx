@@ -80,7 +80,7 @@ export default function Cart() {
               >
                 <ListItemText
                   primary={it.title}
-                  secondary={`$${it.price.toFixed(2)}`}
+                  secondary={`₹${it.price.toFixed(2)}`}
                 />
               </ListItem>
             ))}
@@ -92,7 +92,7 @@ export default function Cart() {
             alignItems="center"
           >
             <Typography variant="subtitle1">
-              Total: ${total.toFixed(2)}
+              Total: ₹{total.toFixed(2)}
             </Typography>
             <Button
               variant="contained"

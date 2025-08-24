@@ -316,7 +316,7 @@ export default function VendorDashboard() {
                   },
                   {
                     data: chartData.revenue,
-                    label: "Revenue ($)",
+                    label: "Revenue (₹)",
                     showMark: true,
                     color: "#FF7F50",
                   },
@@ -471,7 +471,7 @@ export default function VendorDashboard() {
                   label={
                     salesTrends.length > 0
                       ? formatPrice(salesTrends[salesTrends.length - 1].revenue)
-                      : "$0"
+                      : "₹0"
                   }
                   color="warning"
                   size="small"

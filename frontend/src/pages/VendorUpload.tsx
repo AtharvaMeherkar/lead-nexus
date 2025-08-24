@@ -207,7 +207,7 @@ export default function VendorUpload() {
                   <TableRow>
                     <TableCell>Title</TableCell>
                     <TableCell>Industry</TableCell>
-                    <TableCell>Price ($)</TableCell>
+                    <TableCell>Price (₹)</TableCell>
                     <TableCell>Contact Email</TableCell>
                     <TableCell>Company</TableCell>
                     <TableCell>Additional Info</TableCell>

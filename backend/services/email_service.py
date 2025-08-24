@@ -208,12 +208,6 @@ class EmailService:
             'text': text_content
         }
     
-
-            'subject': subject,
-            'html': html_content,
-            'text': text_content
-        }
-    
     def get_lead_approval_email_template(self, vendor_name: str, lead_title: str, status: str, notes: str = None) -> Dict[str, str]:
         """Generate lead approval/rejection email"""
         is_approved = status.lower() == 'approved'

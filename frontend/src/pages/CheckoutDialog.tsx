@@ -315,7 +315,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
                   {isCartCheckout ? "Cart Total" : "Lead Purchase"}
                 </Typography>
                 <Typography variant="h6" color="primary">
-                  ${isCartCheckout ? cartTotal?.toFixed(2) : "Loading..."}
+                  ₹{isCartCheckout ? cartTotal?.toFixed(2) : "Loading..."}
                 </Typography>
               </Box>
             </CardContent>

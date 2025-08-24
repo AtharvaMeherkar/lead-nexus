@@ -9,17 +9,21 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from auth import create_access_token, hash_password, verify_password
 from config import settings
 from models import SessionLocal, User, init_db
 from routes.leads import bp as leads_bp
-from routes.payments import bp as payments_bp
+from routes.payments import payments_bp
 from routes.orders import bp as orders_bp
 from routes.dashboard import bp as dashboard_bp
 from routes.workflows import workflows_bp
 from routes.profile import bp as profile_bp
+from routes.communications import communications_bp
+from routes.advanced_features import advanced_features_bp
+from routes.platform_features import platform_features_bp
+from routes.security import security_bp
 
 
 def create_app() -> Flask:
@@ -57,6 +61,10 @@ def create_app() -> Flask:
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(workflows_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(communications_bp)
+    app.register_blueprint(advanced_features_bp)
+    app.register_blueprint(platform_features_bp)
+    app.register_blueprint(security_bp)
 
     return app
 
@@ -98,6 +106,7 @@ def _register_auth_routes(app: Flask) -> None:
     """
     
     @app.post("/api/auth/register")
+    @cross_origin()
     def register() -> tuple[Dict[str, Any], int]:
         """
         Register a new user account.
@@ -151,6 +160,7 @@ def _register_auth_routes(app: Flask) -> None:
         }), 201
 
     @app.post("/api/auth/login")
+    @cross_origin()
     def login() -> tuple[Dict[str, Any], int]:
         """
         Authenticate user and return access token.
@@ -190,11 +200,13 @@ def _register_auth_routes(app: Flask) -> None:
         }), 200
 
 
+# Create the Flask application instance
+app = create_app()
+
 if __name__ == "__main__":
     # Initialize database and start application
     print("🚀 Starting Lead-Nexus API Server...")
     init_db()
-    app = create_app()
     
     print("✅ Database initialized")
     print("✅ CORS configured")

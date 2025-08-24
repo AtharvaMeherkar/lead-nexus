@@ -1,201 +1,252 @@
 """
-Payment Routes - Mock Payment System Only
+Payment & Billing API Routes
+===========================
 
-This module handles all payment-related operations using a mock payment system.
-Stripe integration has been removed to simplify the codebase.
+This module provides API endpoints for the payment and billing system including:
+- Subscription management
+- Credit system
+- Invoice management
+- Payment processing
+- Refund handling
 """
 
-import json
-import time
-from typing import Dict, Any
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.orm import Session
 
-from flask import Blueprint, jsonify, request
+from models import SessionLocal
+from services.payment_service import PaymentService
 
-from auth import token_required
-from models import Lead, Purchase, SessionLocal
-
-
-# Initialize Blueprint
-bp = Blueprint("payments", __name__, url_prefix="/api/payments")
+payments_bp = Blueprint('payments', __name__)
 
 
-@bp.post("/create-intent")
-@token_required(roles=["client", "admin"])
-def create_payment_intent() -> tuple[Dict[str, Any], int]:
-    """
-    Create a mock payment intent for a single lead purchase.
-    
-    Returns:
-        JSON response with client_secret and payment_intent_id
-    """
-    data = request.get_json(force=True)
-    lead_id = data.get("lead_id")
-    
-    if not lead_id:
-        return jsonify({"error": "lead_id is required"}), 400
-
-    with SessionLocal() as db:
-        # Validate lead exists and is available
-        lead = db.get(Lead, int(lead_id))
-        if not lead or lead.status != "available":
-            return jsonify({"error": "Lead not available"}), 404
-
-        # Create mock payment intent
-        mock_intent_id = f"pi_mock_{lead.id}_{int(time.time())}"
-        
-        # Create purchase record
-        purchase = Purchase(
-            buyer_id=request.user_id,  # type: ignore[attr-defined]
-            lead_id=lead.id,
-            amount=lead.price,
-            status="requires_payment",
-            stripe_payment_intent_id=mock_intent_id,
-        )
-        
-        db.add(purchase)
-        db.commit()
-        
-        return jsonify({
-            "client_secret": f"cs_test_mock_{lead.id}",
-            "payment_intent_id": mock_intent_id,
-            "amount": lead.price,
-            "currency": "usd"
-        }), 200
-
-
-@bp.post("/webhook")
-def payment_webhook() -> tuple[Dict[str, Any], int]:
-    """
-    Handle payment confirmation webhook for mock payments.
-    
-    Expected payload: {"payment_intent_id": "pi_mock_..."}
-    """
+def get_db():
+    db = SessionLocal()
     try:
-        payload = request.get_data(as_text=True)
-        event = json.loads(payload or "{}")
-    except json.JSONDecodeError:
-        return jsonify({"error": "Invalid JSON payload"}), 400
-    
-    payment_intent_id = event.get("payment_intent_id")
-    if not payment_intent_id:
-        return jsonify({"error": "payment_intent_id required"}), 400
-    
-    with SessionLocal() as db:
-        # Find and update purchase
-        purchase = (
-            db.query(Purchase)
-            .filter(Purchase.stripe_payment_intent_id == payment_intent_id)
-            .first()
-        )
+        yield db
+    finally:
+        db.close()
+
+
+@payments_bp.route('/subscriptions/plans', methods=['GET'])
+def get_subscription_plans():
+    """Get available subscription plans"""
+    try:
+        db = next(get_db())
+        payment_service = PaymentService(db)
         
-        if not purchase:
-            return jsonify({"error": "Payment intent not found"}), 404
+        plans = payment_service.get_available_plans()
         
-        # Update purchase and lead status
-        lead = db.get(Lead, purchase.lead_id)
-        if lead:
-            lead.status = "sold"
-        
-        purchase.status = "paid"
-        db.commit()
-    
-    return jsonify({
-        "received": True, 
-        "mode": "mock",
-        "payment_intent_id": payment_intent_id
-    }), 200
-
-
-@bp.post("/mock-cart-intent")
-@token_required(roles=["client", "admin"])
-def create_cart_payment_intent() -> tuple[Dict[str, Any], int]:
-    """
-    Create a mock payment intent for multiple leads (cart checkout).
-    
-    Expected payload: {"lead_ids": [1, 2, 3]}
-    """
-    data = request.get_json(force=True)
-    lead_ids = data.get("lead_ids", [])
-    
-    if not isinstance(lead_ids, list) or not lead_ids:
-        return jsonify({"error": "lead_ids must be a non-empty array"}), 400
-
-    with SessionLocal() as db:
-        # Validate all leads are available
-        leads = []
-        for lead_id in lead_ids:
-            lead = db.get(Lead, int(lead_id))
-            if not lead or lead.status != "available":
-                return jsonify({"error": f"Lead {lead_id} not available"}), 404
-            leads.append(lead)
-
-        # Create cart order
-        order_id = f"order_{int(time.time())}_{request.user_id}"
-        payment_intent_id = f"pmock_{order_id}"
-        total_amount = sum(lead.price for lead in leads)
-
-        # Create purchase records for each lead
-        for lead in leads:
-            purchase = Purchase(
-                buyer_id=request.user_id,  # type: ignore[attr-defined]
-                lead_id=lead.id,
-                amount=lead.price,
-                status="requires_payment",
-                stripe_payment_intent_id=f"{payment_intent_id}_{lead.id}",
-            )
-            db.add(purchase)
-        
-        db.commit()
-
         return jsonify({
-            "client_secret": f"cs_cart_mock_{order_id}",
-            "payment_intent_id": payment_intent_id,
-            "amount": total_amount,
-            "currency": "usd",
-            "lead_count": len(leads)
+            'plans': plans,
+            'count': len(plans)
         }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
-@bp.post("/mock-cart-confirm")
-@token_required(roles=["client", "admin"])
-def confirm_cart_payment() -> tuple[Dict[str, Any], int]:
-    """
-    Confirm payment for cart checkout (multiple leads).
-    
-    Expected payload: {"payment_intent_id": "pmock_order_..."}
-    """
-    data = request.get_json(force=True)
-    payment_intent_id = data.get("payment_intent_id")
-    
-    if not payment_intent_id:
-        return jsonify({"error": "payment_intent_id is required"}), 400
-
-    updated_count = 0
-    
-    with SessionLocal() as db:
-        # Find all purchases for this cart order
-        purchases = (
-            db.query(Purchase)
-            .filter(Purchase.stripe_payment_intent_id.like(f"{payment_intent_id}%"))
-            .all()
+@payments_bp.route('/subscriptions', methods=['POST'])
+@jwt_required()
+def create_subscription():
+    """Create a new subscription"""
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if 'plan_name' not in data:
+            return jsonify({'error': 'Missing plan_name'}), 400
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        result = payment_service.create_subscription(
+            user_id=user_id,
+            plan_name=data['plan_name'],
+            payment_method=data.get('payment_method', 'mock')
         )
         
-        if not purchases:
-            return jsonify({"error": "No purchases found for this payment intent"}), 404
+        if 'error' in result:
+            return jsonify(result), 400
         
-        # Update all purchases and leads
-        for purchase in purchases:
-            lead = db.get(Lead, purchase.lead_id)
-            if lead and lead.status == "available":
-                lead.status = "sold"
-            
-            purchase.status = "paid"
-            updated_count += 1
+        return jsonify(result), 201
         
-        db.commit()
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-    return jsonify({
-        "updated": updated_count,
-        "status": "paid",
-        "payment_intent_id": payment_intent_id
-    }), 200
+
+@payments_bp.route('/subscriptions', methods=['GET'])
+@jwt_required()
+def get_user_subscriptions():
+    """Get user subscription history"""
+    try:
+        user_id = get_jwt_identity()
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        subscriptions = payment_service.get_user_subscriptions(user_id)
+        
+        return jsonify({
+            'subscriptions': subscriptions,
+            'count': len(subscriptions)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/credits', methods=['GET'])
+@jwt_required()
+def get_user_credits():
+    """Get user credit information"""
+    try:
+        user_id = get_jwt_identity()
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        credits_info = payment_service.get_user_credits(user_id)
+        
+        if 'error' in credits_info:
+            return jsonify(credits_info), 400
+        
+        return jsonify(credits_info), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/credits', methods=['POST'])
+@jwt_required()
+def add_credits():
+    """Add credits to user account"""
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if 'amount' not in data:
+            return jsonify({'error': 'Missing amount'}), 400
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        result = payment_service.add_credits(
+            user_id=user_id,
+            amount=float(data['amount']),
+            payment_method=data.get('payment_method', 'mock')
+        )
+        
+        if 'error' in result:
+            return jsonify(result), 400
+        
+        return jsonify(result), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/purchase/credits', methods=['POST'])
+@jwt_required()
+def purchase_with_credits():
+    """Purchase a lead using credits"""
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        required_fields = ['lead_id', 'lead_price']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        result = payment_service.purchase_with_credits(
+            user_id=user_id,
+            lead_id=int(data['lead_id']),
+            lead_price=float(data['lead_price'])
+        )
+        
+        if 'error' in result:
+            return jsonify(result), 400
+        
+        return jsonify(result), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/invoices', methods=['GET'])
+@jwt_required()
+def get_user_invoices():
+    """Get user invoice history"""
+    try:
+        user_id = get_jwt_identity()
+        limit = int(request.args.get('limit', 20))
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        invoices = payment_service.get_user_invoices(user_id, limit)
+        
+        return jsonify({
+            'invoices': invoices,
+            'count': len(invoices)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/refunds', methods=['POST'])
+@jwt_required()
+def process_refund():
+    """Process a refund for a purchase"""
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        required_fields = ['purchase_id', 'refund_amount', 'reason']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        result = payment_service.process_refund(
+            purchase_id=int(data['purchase_id']),
+            refund_amount=float(data['refund_amount']),
+            reason=data['reason']
+        )
+        
+        if 'error' in result:
+            return jsonify(result), 400
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/payment-history', methods=['GET'])
+@jwt_required()
+def get_payment_history():
+    """Get user payment history"""
+    try:
+        user_id = get_jwt_identity()
+        limit = int(request.args.get('limit', 50))
+        
+        db = next(get_db())
+        payment_service = PaymentService(db)
+        
+        history = payment_service.get_payment_history(user_id, limit)
+        
+        return jsonify({
+            'history': history,
+            'count': len(history)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

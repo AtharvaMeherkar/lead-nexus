@@ -608,7 +608,7 @@ export default function Marketplace() {
 
                 <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
                   <Typography variant="h6" color="primary" fontWeight={700}>
-                    ${(item.price || 0).toFixed(2)}
+                    ₹{(item.price || 0).toFixed(2)}
                   </Typography>
                   <Box display="flex" gap={1}>
                     <Tooltip title="View Details">
