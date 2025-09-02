@@ -389,7 +389,7 @@ function OrderDetailsDialog({ open, onClose, order }: OrderDetailsDialogProps) {
               Lead-Nexus Receipt
               Order #${order.purchase_id}
               Date: ${formatDate(order.created_at)}
-              Amount: ${formatPrice(order.price)}
+              Amount: ₹{formatPrice(order.price)}
               Lead: ${order.title}
               Status: ${order.status}
             `;
@@ -543,7 +543,7 @@ export default function Orders() {
                 <Payment color="primary" sx={{ fontSize: 40 }} />
                 <Box>
                   <Typography variant="h4" fontWeight={700}>
-                    ${totalSpent.toFixed(2)}
+                    ₹{totalSpent.toFixed(2)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Spent
@@ -667,7 +667,7 @@ export default function Orders() {
                       fontWeight={600}
                       color="primary"
                     >
-                      ${order.price.toFixed(2)}
+                      ₹{order.price.toFixed(2)}
                     </Typography>
                   </TableCell>
                   <TableCell>

@@ -130,7 +130,7 @@ function PaymentDialog({
     city: "",
     state: "",
     zipCode: "",
-    country: "United States",
+    country: "India",
   });
   const [cardInfo, setCardInfo] = useState({
     cardNumber: "",
@@ -173,11 +173,13 @@ function PaymentDialog({
           <Typography variant="h5" gutterBottom>
             {isFreeTrial ? "Free Trial Started!" : "Payment Successful!"}
           </Typography>
-                     <Typography color="text.secondary">
-             {isFreeTrial
-               ? "Your 14-day free trial has been activated. You'll be charged after the trial period."
-               : `Welcome to ${plan?.title || 'your plan'}! Your subscription is now active.`}
-           </Typography>
+          <Typography color="text.secondary">
+            {isFreeTrial
+              ? "Your 14-day free trial has been activated. You'll be charged after the trial period."
+              : `Welcome to ${
+                  plan?.title || "your plan"
+                }! Your subscription is now active.`}
+          </Typography>
         </DialogContent>
       </Dialog>
     );
@@ -189,11 +191,13 @@ function PaymentDialog({
         <Typography variant="h6">
           {isFreeTrial ? "Start Free Trial" : "Complete Payment"}
         </Typography>
-                 <Typography variant="body2" color="text.secondary">
-           {isFreeTrial
-             ? `${plan?.title || 'Professional'} - 14-day free trial, then $${plan?.price || '299'}/month`
-             : `${plan?.title || 'Plan'} - $${plan?.price || '99'}`}
-         </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {isFreeTrial
+            ? `${plan?.title || "Professional"} - 14-day free trial, then ₹${
+                plan?.price || "19,999"
+              }/month`
+            : `${plan?.title || "Plan"} - ₹${plan?.price || "7,999"}`}
+        </Typography>
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3}>
@@ -420,7 +424,7 @@ export default function PricingPage() {
       case "starter":
         setPaymentDialog({
           open: true,
-          plan: { title: "Starter", price: "99", planType: "starter" },
+          plan: { title: "Starter", price: "7,999", planType: "starter" },
           isFreeTrial: false,
         });
         break;
@@ -429,7 +433,7 @@ export default function PricingPage() {
           open: true,
           plan: {
             title: "Professional",
-            price: "299",
+            price: "19,999",
             planType: "professional",
           },
           isFreeTrial: true,
@@ -447,31 +451,33 @@ export default function PricingPage() {
         Pricing
       </Typography>
       <Typography color="text.secondary" mb={4}>
-        Simple, Transparent Pricing. Choose the plan that best fits your
-        business needs. All plans include access to core features.
+        Simple, Transparent Indian Pricing in ₹. Choose the plan that best fits
+        your business needs. All plans include access to core features and
+        Indian market data.
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Plan
             title="Starter"
-            price="$99"
+            price="₹7,999"
             period="month"
             actionLabel="Get Started"
             planType="starter"
             onAction={handlePlanAction}
             features={[
               "Access to marketplace",
-              "Up to 100 leads/month",
-              "Basic lead filtering",
-              "Email support",
-              "Standard validation",
+              "1,000 Indian B2B leads/month",
+              "Basic lead filtering & search",
+              "Email & WhatsApp support",
+              "GST & company validation",
+              "Indian market insights",
             ]}
           />
         </Grid>
         <Grid item xs={12} md={4}>
           <Plan
             title="Professional"
-            price="$299"
+            price="₹19,999"
             period="month"
             actionLabel="Start Free Trial"
             highlight
@@ -479,11 +485,13 @@ export default function PricingPage() {
             onAction={handlePlanAction}
             features={[
               "Everything in Starter",
-              "Up to 500 leads/month",
-              "Advanced lead filtering",
-              "AI lead scoring",
-              "Real-time collaboration",
+              "5,000 Indian B2B leads/month",
+              "Advanced AI lead scoring",
+              "Multi-channel outreach",
+              "WhatsApp Business API",
               "Priority support",
+              "CRM integrations",
+              "Regional market analytics",
             ]}
           />
         </Grid>
@@ -496,12 +504,13 @@ export default function PricingPage() {
             onAction={handlePlanAction}
             features={[
               "Everything in Professional",
-              "Unlimited leads",
-              "Custom AI models",
-              "API access",
-              "Dedicated account manager",
-              "SLA guarantees",
+              "Unlimited Indian B2B leads",
+              "Custom AI models for India",
+              "Full API access",
+              "Dedicated Indian account manager",
+              "99.9% uptime SLA",
               "Custom integrations",
+              "On-premise deployment option",
             ]}
           />
         </Grid>

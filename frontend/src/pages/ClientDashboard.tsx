@@ -317,7 +317,7 @@ export default function ClientDashboard() {
                   },
                   {
                     data: chartData.spent,
-                    label: "Total Spent ($)",
+                    label: "Total Spent (₹)",
                     showMark: true,
                     color: "#FF7F50",
                   },
