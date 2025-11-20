@@ -1,0 +1,96 @@
+from contextlib import asynccontextmanager
+import sys
+
+# Python 3.13 compatibility patch for aioredis (must be before any aioredis imports)
+if sys.version_info >= (3, 13):
+    try:
+        # Patch aioredis exceptions before it's imported
+        import importlib.util
+        import pathlib
+        import importlib
+        
+        # Find aioredis package
+        aioredis_spec = importlib.util.find_spec("aioredis")
+        if aioredis_spec and aioredis_spec.origin:
+            aioredis_path = pathlib.Path(aioredis_spec.origin).parent
+            exceptions_file = aioredis_path / "exceptions.py"
+            
+            if exceptions_file.exists():
+                # Read the file
+                content = exceptions_file.read_text(encoding="utf-8")
+                # Fix the duplicate base class issue
+                if "class TimeoutError(asyncio.TimeoutError, builtins.TimeoutError, RedisError):" in content:
+                    content = content.replace(
+                        "class TimeoutError(asyncio.TimeoutError, builtins.TimeoutError, RedisError):",
+                        "class TimeoutError(asyncio.TimeoutError, RedisError):"
+                    )
+                    exceptions_file.write_text(content, encoding="utf-8")
+                    # Clear any cached bytecode
+                    importlib.invalidate_caches()
+    except Exception:
+        # If patching fails, continue anyway - might already be patched
+        pass
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.admin.setup import admin, admin_router, init_admin
+from app.api.routes import auth, invoices, leads, public, subscription
+from app.core.config import get_settings
+from app.db.database import Base, engine
+
+settings = get_settings()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    await init_admin(app)
+    yield
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
+
+# CORS configuration - allow common development origins
+# Note: Cannot use allow_origins=["*"] with allow_credentials=True
+if settings.cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.cors_origins],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    # Default to common development origins
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+
+app.include_router(public.router, prefix=settings.api_v1_prefix)
+app.include_router(auth.router, prefix=settings.api_v1_prefix)
+app.include_router(subscription.router, prefix=settings.api_v1_prefix)
+app.include_router(leads.router, prefix=settings.api_v1_prefix)
+app.include_router(invoices.router, prefix=settings.api_v1_prefix)
+app.include_router(admin_router)
+# Admin is mounted via admin.configure() in init_admin()
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
