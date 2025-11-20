@@ -3,9 +3,14 @@ Script to create an admin user in the database.
 Run this once to create your first admin account.
 
 Usage:
+    # Interactive mode (local development):
     python create_admin.py
+    
+    # Non-interactive mode (production/Render):
+    ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=yourpassword python create_admin.py
 """
 import asyncio
+import os
 import selectors
 import sys
 
@@ -18,9 +23,20 @@ from app.models import User
 
 async def create_admin():
     """Create an admin user."""
-    email = input("Enter admin email: ").strip()
-    password = input("Enter admin password (min 8 characters): ").strip()
+    # Support both interactive and environment variable modes
+    email = os.getenv("ADMIN_EMAIL", "").strip()
+    password = os.getenv("ADMIN_PASSWORD", "").strip()
+    
+    # If not provided via env vars, prompt interactively
+    if not email:
+        email = input("Enter admin email: ").strip()
+    if not password:
+        password = input("Enter admin password (min 8 characters): ").strip()
 
+    if not email:
+        print("Error: Admin email is required.")
+        sys.exit(1)
+    
     if len(password) < 8:
         print("Error: Password must be at least 8 characters long.")
         sys.exit(1)
@@ -47,9 +63,9 @@ async def create_admin():
             await session.commit()
             print(f"✓ Created admin user '{email}'.")
 
-    print("\nYou can now login at: http://localhost:5173")
+    print("\n✓ Admin user created successfully!")
     print(f"Email: {email}")
-    print(f"Password: {password}")
+    print(f"Password: {'*' * len(password)}")
     print("\nNote: Admin users will be redirected to the admin panel after login.")
 
 

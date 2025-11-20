@@ -3,6 +3,7 @@
 ## 🎯 Pre-Deployment Checklist
 
 ### **Code Preparation:**
+
 - [x] All features tested and working
 - [x] No console errors
 - [x] Environment variables configured
@@ -11,6 +12,7 @@
 - [x] Admin user creation script ready
 
 ### **Security:**
+
 - [x] Strong SECRET_KEY set
 - [x] No hardcoded credentials
 - [x] .env files in .gitignore
@@ -18,6 +20,7 @@
 - [x] Password hashing working
 
 ### **Configuration:**
+
 - [x] Frontend API URL uses environment variable
 - [x] Backend CORS accepts production frontend URL
 - [x] Database URL configured
@@ -105,14 +108,38 @@
 
 ---
 
-### **5. Initialize Database**
+### **5. Create Admin User**
 
-1. [ ] Go to Render backend service
-2. [ ] Click "Shell" tab
-3. [ ] Run: `python -c "from app.db.database import engine, Base; import asyncio; asyncio.run(engine.begin().__aenter__()).run_sync(Base.metadata.create_all)"`
-   OR wait for automatic table creation on first startup
-4. [ ] Create admin user: `python create_admin.py`
-5. [ ] Enter admin email and password
+**✅ Database tables are created automatically on first startup** (no manual initialization needed)
+
+**🎯 RECOMMENDED: Using API Endpoint (Works on Free Plan - No Shell Needed!)**
+
+1. [ ] Go to your backend API docs: `https://lead-nexus-backend.onrender.com/docs`
+2. [ ] Find **`POST /api/public/create-admin`** endpoint
+3. [ ] Click **"Try it out"**
+4. [ ] Enter in request body:
+   ```json
+   {
+     "email": "admin@yourdomain.com",
+     "password": "yourpassword123"
+   }
+   ```
+5. [ ] Click **"Execute"**
+6. [ ] You should see: `"Admin user 'admin@yourdomain.com' created successfully"`
+
+**Alternative: Using cURL (Command Line)**
+
+```bash
+curl -X POST https://lead-nexus-backend.onrender.com/api/public/create-admin \
+  -H "Content-Type: application/json" \
+  -d "{\"email\": \"admin@yourdomain.com\", \"password\": \"yourpassword123\"}"
+```
+
+**📖 See `CREATE_ADMIN_VIA_API.md` for detailed instructions and other methods**
+
+---
+
+**⚠️ Note:** Render's free plan doesn't support shell access. Use the API endpoint method above instead!
 
 ---
 
@@ -158,4 +185,3 @@ Your application is now live and accessible worldwide!
 ---
 
 **Need help? Check FREE_HOSTING_GUIDE.md for detailed instructions!**
-
