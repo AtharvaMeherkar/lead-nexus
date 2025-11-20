@@ -70,7 +70,7 @@ git push origin main
 6. **Wait 2-3 minutes** for database to be ready
 7. **Copy "Internal Database URL"** (starts with `postgresql://`)
 
-**✅ Save this URL:** `postgresql://...`
+**✅ Save this URL:** postgresql://leadnexus_user:3iCGRaiY85GNF2WN72zMaKM22SJJrRyY@dpg-d4fl9dumcj7s73aqerd0-a/leadnexus
 
 ---
 
