@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     database_url_env: Optional[str] = Field(default=None, alias="database_url")
 
     cors_origins: List[AnyHttpUrl] = []
+    cors_origins_str: Optional[str] = Field(default=None, alias="CORS_ORIGINS")
 
     fastapi_admin_secret: str = Field(default="admin-secret")
 
@@ -40,6 +41,14 @@ class Settings(BaseSettings):
             f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+    
+    @computed_field
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS_ORIGINS from comma-separated string or use list"""
+        if self.cors_origins_str:
+            return [origin.strip() for origin in self.cors_origins_str.split(",") if origin.strip()]
+        return [str(origin) for origin in self.cors_origins] if self.cors_origins else []
 
 
 @lru_cache
