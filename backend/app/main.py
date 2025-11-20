@@ -85,6 +85,15 @@ app.include_router(admin_router)
 # Admin is mounted via admin.configure() in init_admin()
 
 
+@app.get("/")
+async def root():
+    return {
+        "message": "Lead-Nexus API",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
