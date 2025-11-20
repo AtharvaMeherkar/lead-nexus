@@ -74,6 +74,9 @@ if not cors_origins:
     print("Warning: No CORS origins configured. Setting to empty list (may cause CORS issues).")
     cors_origins = ["*"]  # This will be converted to allow all, but credentials won't work
 
+# Check if any Vercel production URL is configured
+has_vercel_production = any("vercel.app" in origin for origin in cors_origins) if cors_origins != ["*"] else False
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins if cors_origins != ["*"] else ["*"],
@@ -81,6 +84,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Custom middleware to handle Vercel preview URLs
+# If any Vercel production URL is configured, allow all Vercel preview URLs
+from starlette.requests import Request
+
+if has_vercel_production:
+    @app.middleware("http")
+    async def vercel_preview_cors_handler(request: Request, call_next):
+        """Allow all Vercel preview URLs if production Vercel URL is configured"""
+        origin = request.headers.get("origin")
+        
+        if origin and "vercel.app" in origin:
+            # This is a Vercel URL (production or preview)
+            # Allow it if we have any Vercel production URL configured
+            response = await call_next(request)
+            # Override CORS headers to allow this origin
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            return response
+        
+        return await call_next(request)
 
 
 app.include_router(public.router, prefix=settings.api_v1_prefix)
