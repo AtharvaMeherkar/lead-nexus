@@ -29,8 +29,9 @@ class Settings(BaseSettings):
     database_url_env: Optional[str] = Field(default=None, alias="database_url")
 
     # cors_origins is not read from env - we use cors_origins_str instead
-    cors_origins: List[AnyHttpUrl] = Field(default_factory=list, exclude=True)
-    cors_origins_str: Optional[str] = Field(default=None, validation_alias="CORS_ORIGINS", serialization_alias="CORS_ORIGINS")
+    # Using validation_alias=None prevents Pydantic from reading this from env
+    cors_origins: List[AnyHttpUrl] = Field(default_factory=list, validation_alias=None)
+    cors_origins_str: Optional[str] = Field(default=None, validation_alias="CORS_ORIGINS")
 
     fastapi_admin_secret: str = Field(default="admin-secret")
 
