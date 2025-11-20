@@ -39,7 +39,11 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         if self.database_url_env:
-            return self.database_url_env
+            # Ensure Render's postgresql:// URL uses psycopg driver
+            url = self.database_url_env
+            if url.startswith("postgresql://") and "+psycopg" not in url:
+                url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+            return url
         return (
             f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
