@@ -67,10 +67,17 @@ if settings.environment == "development" and not cors_origins:
         "http://127.0.0.1:3000",
     ]
 
+# Ensure we have at least one origin (required for allow_credentials=True)
+if not cors_origins:
+    # In production, if no CORS_ORIGINS is set, allow all (but this won't work with credentials)
+    # Better to set CORS_ORIGINS in environment variables
+    print("Warning: No CORS origins configured. Setting to empty list (may cause CORS issues).")
+    cors_origins = ["*"]  # This will be converted to allow all, but credentials won't work
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_origins=cors_origins if cors_origins != ["*"] else ["*"],
+    allow_credentials=cors_origins != ["*"],  # Disable credentials if allowing all
     allow_methods=["*"],
     allow_headers=["*"],
 )
