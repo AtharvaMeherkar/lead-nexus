@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Users, X, CheckCircle, AlertTriangle, Trash2, Merge, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Users, X, CheckCircle, AlertTriangle, Merge, Loader2 } from "lucide-react";
 import { Lead } from "../../types";
 import api from "../../utils/api";
 import { useNotification } from "../../context/NotificationContext";
@@ -20,7 +20,6 @@ interface DeduplicationToolProps {
 const DeduplicationTool = ({ isOpen, onClose, onRefresh }: DeduplicationToolProps) => {
   const { showNotification } = useNotification();
   const [duplicates, setDuplicates] = useState<DuplicateGroup[]>([]);
-  const [loading, setLoading] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
   const [merging, setMerging] = useState(false);

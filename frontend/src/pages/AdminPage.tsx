@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, Users, TrendingUp, Database, DollarSign, Activity, Trash2, CheckSquare } from "lucide-react";
+import { Upload, Users, TrendingUp, Database, Activity, Trash2, CheckSquare } from "lucide-react";
 
 import TopNav from "../components/Shared/TopNav";
 import { useAuth } from "../context/AuthContext";

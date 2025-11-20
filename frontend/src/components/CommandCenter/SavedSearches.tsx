@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bookmark, X, Search, Trash2 } from "lucide-react";
+import { Bookmark, Search, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SavedSearch {
@@ -72,12 +72,6 @@ const SavedSearches = ({ onLoadSearch, currentFilters, currentSortBy }: SavedSea
     localStorage.setItem("leadnexus_saved_searches", JSON.stringify(updated));
   };
 
-  const isCurrentSearchSaved = () => {
-    return savedSearches.some(
-      (s) =>
-        JSON.stringify(s.filters) === JSON.stringify(currentFilters) && s.sortBy === currentSortBy
-    );
-  };
 
   if (savedSearches.length === 0 && !showSaveDialog) {
     return (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Building2, Briefcase, Filter, TrendingUp } from "lucide-react";
+import { Users, Building2, Filter, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 import api from "../../utils/api";

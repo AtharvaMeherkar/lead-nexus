@@ -9,7 +9,6 @@ import {
   XCircle,
   AlertCircle,
   Download,
-  Trash2,
   Building2,
   List,
   TrendingUp,
@@ -122,9 +121,6 @@ const ProfilePage = () => {
         return "from-gray-500 to-gray-600";
     }
   };
-
-  // Calculate total leads in all lists (approximate from localStorage or we can enhance backend later)
-  const totalLeadsInLists = leadLists.length * 0; // Placeholder - can be enhanced with backend
 
   return (
     <div className="space-y-6">

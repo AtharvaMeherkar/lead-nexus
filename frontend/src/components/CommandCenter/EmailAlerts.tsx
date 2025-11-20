@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Bell, X, Plus, Trash2, Mail, CheckCircle, AlertCircle } from "lucide-react";
 import { useNotification } from "../../context/NotificationContext";
-import api from "../../utils/api";
 
 interface EmailAlert {
   id: string;
