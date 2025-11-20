@@ -86,8 +86,10 @@ app.add_middleware(
 )
 
 # Custom middleware to handle Vercel preview URLs
-# If any Vercel production URL is configured, allow all Vercel preview URLs
+# This runs AFTER CORS middleware (so it runs FIRST in the request chain)
+# It intercepts OPTIONS preflight requests for Vercel preview URLs
 from starlette.requests import Request
+from starlette.responses import Response
 
 if has_vercel_production:
     @app.middleware("http")
@@ -95,18 +97,31 @@ if has_vercel_production:
         """Allow all Vercel preview URLs if production Vercel URL is configured"""
         origin = request.headers.get("origin")
         
+        # Handle OPTIONS preflight requests for Vercel preview URLs
+        if request.method == "OPTIONS" and origin and "vercel.app" in origin:
+            # Return early with proper CORS headers for preflight
+            return Response(
+                status_code=200,
+                headers={
+                    "Access-Control-Allow-Origin": origin,
+                    "Access-Control-Allow-Credentials": "true",
+                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Max-Age": "3600",
+                }
+            )
+        
+        # For non-OPTIONS requests, process normally and add CORS headers if needed
+        response = await call_next(request)
+        
         if origin and "vercel.app" in origin:
-            # This is a Vercel URL (production or preview)
-            # Allow it if we have any Vercel production URL configured
-            response = await call_next(request)
-            # Override CORS headers to allow this origin
+            # Override CORS headers to allow this Vercel origin
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
             response.headers["Access-Control-Allow-Headers"] = "*"
-            return response
         
-        return await call_next(request)
+        return response
 
 
 app.include_router(public.router, prefix=settings.api_v1_prefix)
