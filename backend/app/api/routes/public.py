@@ -59,7 +59,13 @@ async def create_admin_user(
     if len(request.password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
     
-    # Security check: require token if configured, or allow only if no admin exists
+    # Check if user already exists (we need this for the security logic)
+    existing_user_result = await session.execute(
+        select(User).where(User.email == request.email)
+    )
+    existing_user = existing_user_result.scalar_one_or_none()
+    
+    # Security check: require token if configured, or allow only if no admin exists OR upgrading existing user
     setup_token = x_setup_token or request.setup_token
     
     if settings.admin_setup_token:
@@ -70,25 +76,23 @@ async def create_admin_user(
                 detail="Invalid setup token. Set ADMIN_SETUP_TOKEN environment variable or provide valid token."
             )
     else:
-        # If no token configured, only allow if no admin exists (first-time setup)
-        admin_count = await session.scalar(
-            select(func.count(User.id)).where(User.role == "admin")
-        ) or 0
-        
-        if admin_count > 0:
-            raise HTTPException(
-                status_code=403,
-                detail="Admin user already exists. Set ADMIN_SETUP_TOKEN environment variable to create additional admins."
-            )
-    
-    # Check if user already exists
-    existing_user_result = await session.execute(
-        select(User).where(User.email == request.email)
-    )
-    existing_user = existing_user_result.scalar_one_or_none()
+        # If no token configured:
+        # - Allow if no admin exists (first-time setup)
+        # - Allow if upgrading an existing user (even if admin exists)
+        # - Block only if trying to create a NEW admin when one already exists
+        if not existing_user:
+            admin_count = await session.scalar(
+                select(func.count(User.id)).where(User.role == "admin")
+            ) or 0
+            
+            if admin_count > 0:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Admin user already exists. Set ADMIN_SETUP_TOKEN environment variable to create additional admins, or use an existing user's email to upgrade them to admin."
+                )
     
     if existing_user:
-        # Update existing user to admin
+        # Update existing user to admin (upgrade regular user to admin)
         existing_user.role = "admin"
         existing_user.hashed_password = get_password_hash(request.password)
         await session.commit()
