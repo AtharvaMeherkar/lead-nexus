@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     cors_origins_str: Optional[str] = Field(default=None, validation_alias="CORS_ORIGINS")
 
     fastapi_admin_secret: str = Field(default="admin-secret")
+    admin_setup_token: Optional[str] = Field(default=None, alias="ADMIN_SETUP_TOKEN")
 
     @computed_field
     @property
