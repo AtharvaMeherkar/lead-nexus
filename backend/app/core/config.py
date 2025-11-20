@@ -10,6 +10,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
+        env_ignore_empty=True,
     )
 
     app_name: str = "Lead Nexus"
@@ -27,8 +28,9 @@ class Settings(BaseSettings):
 
     database_url_env: Optional[str] = Field(default=None, alias="database_url")
 
-    cors_origins: List[AnyHttpUrl] = Field(default_factory=list)  # Don't read from env
-    cors_origins_str: Optional[str] = Field(default=None, validation_alias="CORS_ORIGINS")
+    # cors_origins is not read from env - we use cors_origins_str instead
+    cors_origins: List[AnyHttpUrl] = Field(default_factory=list, exclude=True)
+    cors_origins_str: Optional[str] = Field(default=None, validation_alias="CORS_ORIGINS", serialization_alias="CORS_ORIGINS")
 
     fastapi_admin_secret: str = Field(default="admin-secret")
 
